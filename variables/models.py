@@ -7,10 +7,4 @@ User = get_user_model()
 class Variables(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     variables = models.TextField()
-
-
-class Permissions(models.Model):
-    variables = models.ForeignKey(Variables, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    read = models.BooleanField(default=False)
-    edit = models.BooleanField(default=False)
+    password = models.CharField(max_length=100)

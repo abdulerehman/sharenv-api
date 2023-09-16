@@ -7,4 +7,4 @@ User = get_user_model()
 class Variables(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     variables = models.TextField()
-    password = models.CharField(max_length=100)
+    password = models.CharField(max_length=100, null=True, blank=True)

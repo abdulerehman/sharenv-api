@@ -11,6 +11,7 @@ class VariablesView(APIView):
         if id:
             variables = Variables.objects.filter(id=id)
             if variables.exists():
+                variables = variables.get()
                 if variables.password:
                     # get password
                     return Response({})
@@ -29,7 +30,14 @@ class VariablesView(APIView):
         return Response({})
 
     def delete(self, request, id):
-        return Response({})
+        if request.user.is_authenticated:
+            variables = Variables.objects.filter(user_id=request.user.id, id=id)
+            if variables.exists():
+                variables = variables.get()
+                variables.delete()
+                return Response({"type":"success", "message":"variables was deleted"})
+            return Response(data={"type":"error", "message":"variables not found"})                
+        return Response(data={"type":"error", "message":"please login"})
 
     def post(self, request):
         return Response({})

@@ -27,7 +27,20 @@ class VariablesView(APIView):
         return Response(data={"type":"error", "message":"please login"})
 
     def put(self, request, id):
-        return Response({})
+        if not request.user.is_authenticated:
+            return Response(data={"type":"error", "message":"please login"})
+        variables = Variables.objects.filter(id=id, user_id=request.user.id)
+        data = request.data
+        if variables.exists():
+            try:
+                variables = variables.get()
+                variables.variables = data['variables']
+                variables.password = data['password']
+                variables.save()
+                return Response({"type":"success", "message":"variables updated succesfully"})
+            except Exception as e:
+                return Response({"type":"error", "message":e})
+        return Response(data={"type":"error", "message":"variables not found"})                
 
     def delete(self, request, id):
         if request.user.is_authenticated:
@@ -40,7 +53,18 @@ class VariablesView(APIView):
         return Response(data={"type":"error", "message":"please login"})
 
     def post(self, request):
-        return Response({})
+        if not request.user.is_authenticated:
+            return Response(data={"type":"error", "message":"please login"})
+        data = request.data
+        try:
+            variables = Variables.objects.create(
+                variables = data['variables'],
+                password = data['password']
+            )
+            variables.save()
+            return Response({"type":"success", "message":"variables created succesfully"})
+        except Exception as e:
+            return Response({"type":"error", "message":e})
 
 
 class SignUpWithProviderView(APIView):
